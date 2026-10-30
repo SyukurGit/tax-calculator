@@ -1,0 +1,93 @@
+# Tekton Task Definitions for Tax Calculator CI/CD Pipeline
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: npminstall
+  labels:
+    app.kubernetes.io/part-of: tax-calculator
+spec:
+  description: Install Node dependencies for Tax Calculator
+  workspaces:
+    - name: source
+  steps:
+    - name: npm-install
+      image: node:18-alpine
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Node Version: $(node -v)"
+        echo "NPM Version: $(npm -v)"
+        echo "Installing dependencies..."
+        npm install
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: tests
+  labels:
+    app.kubernetes.io/part-of: tax-calculator
+spec:
+  description: Run Jasmine automated unit tests for Tax Calculator
+  workspaces:
+    - name: source
+  steps:
+    - name: run-jasmine
+      image: node:18-alpine
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Executing Jasmine Unit Tests..."
+        npm test
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: buildah
+  labels:
+    app.kubernetes.io/part-of: tax-calculator
+spec:
+  description: Build and push container image using Buildah
+  params:
+    - name: IMAGE
+      description: Target container image reference in IBM Cloud Container Registry
+      type: string
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: quay.io/buildah/stable:v1.31.0
+      workingDir: $(workspaces.source.path)
+      securityContext:
+        privileged: true
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Building image $(params.IMAGE)..."
+        buildah --storage-driver=vfs bud -t $(params.IMAGE) .
+        echo "Pushing image to registry $(params.IMAGE)..."
+        buildah --storage-driver=vfs push $(params.IMAGE)
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: deploy
+  labels:
+    app.kubernetes.io/part-of: tax-calculator
+spec:
+  description: Deploy Tax Calculator manifests to Kubernetes cluster
+  workspaces:
+    - name: source
+  steps:
+    - name: kubectl-apply
+      image: bitnami/kubectl:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Applying Kubernetes manifests..."
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        echo "Deployment completed successfully."
+        kubectl get deployment,service -l app=tax-calculator

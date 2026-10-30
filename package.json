@@ -1,0 +1,26 @@
+{
+  "name": "tax-calculator-app",
+  "version": "1.0.0",
+  "description": "Tax Calculator Application with Jasmine Testing, Docker Containerization, and Tekton CI/CD Pipeline",
+  "main": "script.js",
+  "scripts": {
+    "test": "jasmine",
+    "start": "npx http-server -p 8080 -a 0.0.0.0"
+  },
+  "keywords": [
+    "tax-calculator",
+    "jasmine",
+    "docker",
+    "tekton",
+    "devops",
+    "ibm-cloud"
+  ],
+  "author": "Syukur",
+  "license": "MIT",
+  "devDependencies": {
+    "jasmine": "^5.1.0"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

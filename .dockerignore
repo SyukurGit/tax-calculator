@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+spec
+tekton
+k8s
+*.md
+.dockerignore
