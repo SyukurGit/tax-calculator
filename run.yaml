@@ -1,0 +1,26 @@
+# PipelineRun Manifest for executing tax-calculator-pipeline
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: tax-calculator-run-
+  labels:
+    app.kubernetes.io/part-of: tax-calculator
+spec:
+  pipelineRef:
+    name: tax-calculator-pipeline
+  params:
+    - name: repo-url
+      value: https://github.com/SyukurGit/tax-calculator.git
+    - name: revision
+      value: main
+    - name: image-reference
+      value: us.icr.io/tax-calculator-ns/tax-calculator:latest
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
