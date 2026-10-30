@@ -1,246 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tax Calculator Application</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            color: #1e293b;
-        }
-
-        .container {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-            padding: 40px;
-            max-width: 520px;
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #e0f2fe;
-            color: #0284c7;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            margin-bottom: 8px;
-        }
-
-        h1 {
-            color: #0f172a;
-            font-size: 26px;
-            font-weight: 800;
-        }
-
-        p.subtitle {
-            font-size: 14px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #334155;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            background-color: #f8fafc;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #2563eb;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-
-        button.btn-calc {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-        }
-
-        button.btn-calc:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
-        }
-
-        button.btn-calc:active {
-            transform: translateY(0);
-        }
-
-        .result {
-            margin-top: 28px;
-            padding: 22px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #2563eb;
-            display: none;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result.show {
-            display: block;
-        }
-
-        .result h3 {
-            color: #0f172a;
-            margin-bottom: 14px;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-        }
-
-        .result-item.highlight {
-            border-bottom: none;
-            font-weight: 700;
-            color: #2563eb;
-            font-size: 17px;
-            margin-top: 8px;
-            padding-top: 12px;
-            border-top: 2px dashed #cbd5e1;
-        }
-
-        .result-label {
-            color: #64748b;
-        }
-
-        .result-value {
-            color: #0f172a;
-            font-weight: 600;
-        }
-
-        .error {
-            color: #ef4444;
-            font-size: 13px;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .error.show {
-            display: block;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tax Calculator</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <span class="badge">Cloud-Native App</span>
-            <h1>Tax Calculator</h1>
-            <p class="subtitle">Modern Progressive Tax Estimation Engine</p>
-        </div>
-        
-        <div class="form-group">
-            <label for="income">Annual Gross Income ($)</label>
-            <input type="number" id="income" placeholder="e.g. 75000" min="0" step="0.01" value="75000">
-            <div class="error" id="incomeError">Please enter a valid positive income amount.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="deductions">Standard / Itemized Deductions ($)</label>
-            <input type="number" id="deductions" placeholder="e.g. 13850" min="0" step="0.01" value="13850">
-            <div class="error" id="deductionsError">Please enter a valid deduction amount.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="filingStatus">Filing Status</label>
-            <select id="filingStatus">
-                <option value="single">Single</option>
-                <option value="married">Married Filing Jointly</option>
-                <option value="head">Head of Household</option>
-            </select>
-        </div>
-
-        <button type="button" class="btn-calc" onclick="calculateTax()">Calculate Tax</button>
-
-        <div class="result" id="result">
-            <h3>Calculation Summary</h3>
-            <div class="result-item">
-                <span class="result-label">Gross Income:</span>
-                <span class="result-value" id="grossIncome">$0.00</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Deductions Applied:</span>
-                <span class="result-value" id="deductionsAmount">$0.00</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Taxable Income:</span>
-                <span class="result-value" id="taxableIncome">$0.00</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Effective Tax Rate:</span>
-                <span class="result-value" id="taxRate">0.00%</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Total Tax Due:</span>
-                <span class="result-value" id="totalTax">$0.00</span>
-            </div>
-            <div class="result-item highlight">
-                <span class="result-label">Net Take-Home Pay:</span>
-                <span class="result-value" id="netIncome">$0.00</span>
-            </div>
-        </div>
+  <main class="card">
+    <div class="app-header">
+      <span class="badge">tax-calculator</span>
+      <h1>Tax Calculator</h1>
+      <p class="sub">Progressive federal income tax calculation engine</p>
     </div>
 
-    <script src="script.js"></script>
+    <form id="tax-form" onsubmit="calculate(event)">
+      <div class="field">
+        <label for="gross-income">Your Total Income</label>
+        <input type="number" id="gross-income" value="82000" min="0" step="0.01" required>
+      </div>
+
+      <div class="field">
+        <label for="tax-due">Tax Due</label>
+        <input type="number" id="tax-due" value="0" min="0" step="0.01">
+      </div>
+
+      <div class="field">
+        <label for="deductions">Deductions</label>
+        <input type="number" id="deductions" value="5000" min="0" step="0.01">
+      </div>
+
+      <div class="field">
+        <label for="vat-base">VAT-able Spend</label>
+        <input type="number" id="vat-base" value="2400" min="0" step="0.01">
+      </div>
+
+      <div class="field">
+        <label for="vat-rate">VAT Rate (%)</label>
+        <input type="number" id="vat-rate" value="20" min="0" step="0.01">
+      </div>
+
+      <button type="submit" id="calculate" class="btn-calculate">Calculate</button>
+    </form>
+
+    <div class="results" id="results">
+      <div class="result-row">
+        <span class="result-label">Taxable Income:</span>
+        <span class="result-value" id="r-taxable">$77,000.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Taxes Owed:</span>
+        <span class="result-value" id="r-tax">$12,243.50</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">VAT:</span>
+        <span class="result-value" id="r-vat">$480.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Effective Rate:</span>
+        <span class="result-value" id="r-rate">14.93%</span>
+      </div>
+      <div class="result-row take-home">
+        <span class="result-label">Take-Home Pay:</span>
+        <span class="result-value" id="r-take">$69,276.50</span>
+      </div>
+    </div>
+  </main>
+
+  <script src="taxCalculator.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
